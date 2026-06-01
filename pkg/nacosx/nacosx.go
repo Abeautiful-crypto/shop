@@ -1,7 +1,10 @@
 package nacosx
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
@@ -119,4 +122,88 @@ func NewConfigClient(cfg Config) (config_client.IConfigClient, error) {
 			},
 		},
 	)
+}
+
+// RegisterGRPCService 注册 gRPC 服务到 Nacos
+func RegisterGRPCService(cfg Config, serviceName string, ip string, port int) (string, error) {
+	client, err := clients.CreateNamingClient(map[string]interface{}{
+		"clientConfig": &constant.ClientConfig{
+			NamespaceId:         cfg.NamespaceID,
+			TimeoutMs:           cfg.TimeoutMs,
+			Username:            cfg.Username,
+			Password:            cfg.Password,
+			LogDir:              cfg.LogDir,
+			CacheDir:            cfg.CacheDir,
+			LogLevel:            cfg.LogLevel,
+			NotLoadCacheAtStart: true,
+		},
+		"serverConfigs": []constant.ServerConfig{
+			{
+				IpAddr: cfg.ServerAddr,
+				Port:   cfg.ServerPort,
+			},
+		}})
+	if err != nil {
+		fmt.Println(err)
+		return "nacos注册服务连接失败", err
+	}
+	success, err := client.RegisterInstance(vo.RegisterInstanceParam{
+		Ip:          ip,
+		Port:        uint64(port),
+		ServiceName: serviceName,
+		GroupName:   cfg.Group,
+		Ephemeral:   true, // 临时实例（自动心跳）
+	})
+	if err != nil || !success {
+		fmt.Println(err)
+		return "nacos注册服务失败-2", err
+	}
+	fmt.Println("nacos：注册微服务-成功")
+	return "", nil
+}
+
+// GetServiceAddr 获取单个服务信息
+func GetServiceAddr(cfg Config, serviceName string) (string, int, int) {
+	client, err := clients.CreateNamingClient(map[string]interface{}{
+		"clientConfig": &constant.ClientConfig{
+			NamespaceId:         cfg.NamespaceID,
+			TimeoutMs:           cfg.TimeoutMs,
+			Username:            cfg.Username,
+			Password:            cfg.Password,
+			LogDir:              cfg.LogDir,
+			CacheDir:            cfg.CacheDir,
+			LogLevel:            cfg.LogLevel,
+			NotLoadCacheAtStart: true,
+		},
+		"serverConfigs": []constant.ServerConfig{
+			{
+				IpAddr: cfg.ServerAddr,
+				Port:   cfg.ServerPort,
+			},
+		}})
+	if err != nil {
+		fmt.Println(err)
+		return "nacos连接失败", 0, 0
+	}
+
+	instances, err := client.GetService(vo.GetServiceParam{
+		ServiceName: serviceName,
+		GroupName:   cfg.Group,
+	})
+	if err != nil {
+		fmt.Println(err)
+		return "获取实例列表失败", 0, 0
+	}
+	jsonData1, _ := json.Marshal(instances)
+	fmt.Println("服务信息：", string(jsonData1))
+
+	jsonData2, _ := json.Marshal(instances.Hosts)
+	fmt.Println("服务信息-ip：", string(jsonData2))
+
+	instance := instances.Hosts[0]
+	str := fmt.Sprintf("获取成功，%v:%v", instance.Ip, int(instance.Port))
+	fmt.Println(str)
+
+	ip, _ := strconv.Atoi(instance.Ip)
+	return "", ip, int(instance.Port)
 }
