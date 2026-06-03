@@ -13,7 +13,7 @@ const SECRET_KEY = ""
 
 func BaiduPass(content string) int {
 
-	url := "https://aip.baidubce.com/rest/2.0/solution/v1/texcontt_censor/v2/user_defined?access_token=" + GetAccessToken()
+	url := "https://aip.baidubce.com/rest/2.0/solution/v1/text_censor/v2/user_defined?access_token=" + GetAccessToken()
 	payload := strings.NewReader("text=" + content + "&strategyId=1")
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", url, payload)
