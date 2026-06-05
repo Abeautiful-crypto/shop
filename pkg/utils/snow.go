@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"github.com/BwCloudWeGo/bw-cli/pkg/config"
+	"github.com/BwCloudWeGo/bw-cli/pkg/redisx"
 	"sync"
 	"time"
 )
@@ -60,9 +63,38 @@ func SnowId() int64 {
 	if err != nil {
 		panic(err)
 	}
-	for {
-		fmt.Println(node.GetId())
-	}
 
 	return node.GetId()
+}
+
+// RedisLock 获取 Redis 锁
+func RedisLock() bool {
+	rdb := redisx.NewClient(config.GlobalConfig.Redis)
+	ok, err := rdb.SetNX(context.Background(), "my_lock", "1", 10*time.Second).Result()
+	if err != nil {
+		return false
+	}
+	return ok //返回的bool-true
+}
+
+// 释放锁
+func unlock() {
+	rdb := redisx.NewClient(config.GlobalConfig.Redis)
+	rdb.Del(context.Background(), "my_lock")
+}
+
+func GetSnowId() int64 {
+	var id int64
+	// 抢到锁
+	if RedisLock() {
+		id = SnowId()
+	} else {
+		id = 0
+	}
+	defer unlock() // 函数结束释放锁
+
+	if id == 0 {
+		fmt.Println("获取雪花算法id失败")
+	}
+	return id
 }
