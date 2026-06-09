@@ -3,7 +3,7 @@ server_addr: 127.0.0.1
 server_port: 8848
 namespace_id: ""
 group: DEFAULT_GROUP
-data_id: xiaolanshu.yaml
+data_id: xiaolanshu.yaml #测试环境：test-xiaolanshu.yaml   生产环境：pro-xiaolanshu.yaml   开发环境：dev-xiaolanshu.yaml
 username: ""
 password: ""
 timeout_ms: 5000
