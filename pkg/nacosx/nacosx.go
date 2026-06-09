@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/nacos-group/nacos-sdk-go/v2/clients"
@@ -163,7 +162,7 @@ func RegisterGRPCService(cfg Config, serviceName string, ip string, port int) (s
 }
 
 // GetServiceAddr 获取单个服务信息
-func GetServiceAddr(cfg Config, serviceName string) (string, int, int) {
+func GetServiceAddr(cfg Config, serviceName string) (string, string, int) {
 	client, err := clients.CreateNamingClient(map[string]interface{}{
 		"clientConfig": &constant.ClientConfig{
 			NamespaceId:         cfg.NamespaceID,
@@ -183,7 +182,7 @@ func GetServiceAddr(cfg Config, serviceName string) (string, int, int) {
 		}})
 	if err != nil {
 		fmt.Println(err)
-		return "nacos连接失败", 0, 0
+		return "nacos连接失败", "", 0
 	}
 
 	instances, err := client.GetService(vo.GetServiceParam{
@@ -192,7 +191,7 @@ func GetServiceAddr(cfg Config, serviceName string) (string, int, int) {
 	})
 	if err != nil {
 		fmt.Println(err)
-		return "获取实例列表失败", 0, 0
+		return "获取实例列表失败", "", 0
 	}
 	jsonData1, _ := json.Marshal(instances)
 	fmt.Println("服务信息：", string(jsonData1))
@@ -204,6 +203,6 @@ func GetServiceAddr(cfg Config, serviceName string) (string, int, int) {
 	str := fmt.Sprintf("获取成功，%v:%v", instance.Ip, int(instance.Port))
 	fmt.Println(str)
 
-	ip, _ := strconv.Atoi(instance.Ip)
-	return "", ip, int(instance.Port)
+	//ip, _ := strconv.Atoi(instance.Ip)
+	return "", instance.Ip, int(instance.Port)
 }
