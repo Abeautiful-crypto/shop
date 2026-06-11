@@ -23,8 +23,8 @@ func FilterSensitiveWords(content string) string {
 	// SensitiveWords 极简敏感词库，可直接用于自动过滤整改
 	var sensitiveWords = []string{
 		// 政治/违规类
-		"敏感词示例1",
-		"敏感词示例2",
+		"暴力",
+		"赌博",
 		"违法",
 		"违规",
 		"反动",
