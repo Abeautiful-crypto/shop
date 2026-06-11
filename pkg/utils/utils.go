@@ -17,8 +17,8 @@ func Md5Str(str string) string {
 	return md5str1
 }
 
-// 敏感词自动替换
-func filterSensitiveWords(content string) string {
+// FilterSensitiveWords 敏感词自动替换
+func FilterSensitiveWords(content string) string {
 	// 这里写你的敏感词列表，示例：
 	// SensitiveWords 极简敏感词库，可直接用于自动过滤整改
 	var sensitiveWords = []string{
