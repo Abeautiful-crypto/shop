@@ -77,8 +77,8 @@ func RedisLock() bool {
 	return ok //返回的bool-true
 }
 
-// 释放锁
-func unlock() {
+// Unlock 释放锁
+func Unlock() {
 	rdb := redisx.NewClient(config.GlobalConfig.Redis)
 	rdb.Del(context.Background(), "my_lock")
 }
@@ -91,7 +91,7 @@ func GetSnowId() int64 {
 	} else {
 		id = 0
 	}
-	defer unlock() // 函数结束释放锁
+	defer Unlock() // 函数结束释放锁
 
 	if id == 0 {
 		fmt.Println("获取雪花算法id失败")
