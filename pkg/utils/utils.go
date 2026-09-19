@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/md5"
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"strings"
 )
 
@@ -125,4 +126,18 @@ func FilterSensitiveWords(content string) string {
 		cleaned = strings.ReplaceAll(cleaned, word, "***")
 	}
 	return cleaned
+}
+
+// HashPassword 对明文密码生成bcrypt哈希
+func HashPassword(password string) (string, error) {
+	// cost：计算开销，推荐10-12；越大越安全，但是加密校验越慢
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	return string(hash), err
+}
+
+// CheckPassword 对比明文密码和数据库里的bcrypt哈希
+func CheckPassword(hashPwd string, plainPwd string) bool {
+	// 返回nil代表匹配成功
+	err := bcrypt.CompareHashAndPassword([]byte(hashPwd), []byte(plainPwd))
+	return err == nil
 }
