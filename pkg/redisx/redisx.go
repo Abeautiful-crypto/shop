@@ -248,3 +248,52 @@ func newToken() (string, error) {
 	}
 	return hex.EncodeToString(bytes[:]), nil
 }
+
+// redis 令牌桶限流
+func (l *Locker) Allow(ctx context.Context, key string, capacity, rate int64) (bool, error) {
+	if l == nil || l.client == nil {
+		return false, errors.New("redis client is nil")
+	}
+
+	fullKey := l.fullKey(key)
+
+	now := time.Now().UnixMilli()
+
+	const tokenBucketScript = `
+        local key = KEYS[1]
+        local capacity = tonumber(ARGV[1])
+        local rate = tonumber(ARGV[2])
+        local now = tonumber(ARGV[3])
+        local requested = tonumber(ARGV[4])
+
+        local bucket = redis.call("HMGET", key, "tokens", "last_time")
+        local tokens = tonumber(bucket[1])
+        local last_time = tonumber(bucket[2])
+
+        if tokens == nil then
+            tokens = capacity
+            last_time = now
+        end
+
+        local delta = math.max(0, now - last_time)
+        local add_tokens = delta * rate / 1000.0
+        tokens = math.min(capacity, tokens + add_tokens)
+
+        local allowed = 0
+        if tokens >= requested then
+            tokens = tokens - requested
+            allowed = 1
+        end
+
+        redis.call("HMSET", key, "tokens", tokens, "last_time", now)
+        redis.call("EXPIRE", key, 3600)
+        return allowed
+    `
+	// tokenBucketScript:Lua脚本   存储在redis中的数据（剩余多少token,和最后一次操作的时间戳）capacity: 桶的容量 rate: 每秒补充的令牌数量，now:当前毫秒的时间戳 1:每次请求消耗的令牌
+	result, err := l.client.Eval(ctx, tokenBucketScript, []string{fullKey}, capacity, rate, now, 1).Int64()
+	if err != nil {
+		return false, err
+	}
+
+	return result == 1, nil
+}

@@ -1,0 +1,221 @@
+syntax = "proto3";
+
+package shop.v1;
+
+option go_package = "github.com/BwCloudWeGo/bw-cli/api/gen/shop/v1;shopv1";
+
+// ShopService 是 shop 业务服务的 gRPC 边界。
+// 默认 CRUD 契约可直接调用；业务增长时再扩展 message 和 RPC。
+service ShopService {
+  rpc CreateShop(CreateShopRequest) returns (ShopResponse);
+  rpc GetShop(GetShopRequest) returns (ShopResponse);
+  rpc ListShops(ListShopsRequest) returns (ListShopsResponse);
+  rpc UpdateShop(UpdateShopRequest) returns (ShopResponse);
+  rpc DeleteShop(DeleteShopRequest) returns (DeleteShopResponse);
+  rpc ActivityGoodAdd(ActivityGoodAddRequest) returns (ActivityGoodAddResponse);//秒杀商品添加
+  rpc ActivityOrder(ActivityOrderRequest) returns (ActivityOrderResponse);//秒杀活动下单
+  rpc CartAdd(CartAddRequest) returns (CartAddResponse);//购物车添加
+  rpc CartDel(CartDelRequest) returns (CartDelResponse);//购物车删除
+  rpc CartAcc(CartAccRequest) returns (CartAccResponse);//购物车数量累加
+  rpc CartList(CartListRequest) returns (CartListResponse);//购物车列表
+  rpc CartOrder(CartOrderRequest) returns (CartOrderResponse);//购物车下单
+  rpc ActivityAdd(ActivityAddRequest) returns (ActivityAddResponse);//秒杀活动添加
+  rpc ActivityDel(ActivityDelRequest) returns (ActivityDelResponse);//秒杀活动删除
+  rpc ActivityUpdate(ActivityUpdateRequest) returns (ActivityUpdateResponse);//秒杀活动修改
+  rpc ActivityList(ActivityListRequest) returns (ActivityListResponse);//秒杀活动列表
+}
+
+//秒杀活动列表
+message ActivityListRequest {
+  string name=1;
+  int64 status=2;
+}
+
+message ActivityList{
+  int64 id=1;
+  string activityName=2;
+  string startTime=3;
+  string endTime=4;
+  int64 status=5;
+}
+
+message ActivityListResponse {
+  repeated ActivityList list=1;
+}
+
+//秒杀活动修改
+message ActivityUpdateRequest {
+  int64 id=1;
+  string name=2;
+  string startTime=3;
+  string endTime=4;
+  int64 status=5;
+}
+
+
+message ActivityUpdateResponse {
+  bool success=1;
+}
+
+//秒杀活动删除
+message ActivityDelRequest {
+  int64 id=1;
+}
+
+
+message ActivityDelResponse {
+  bool success=1;
+}
+
+//秒杀活动添加
+message ActivityAddRequest {
+  string name=1;
+  string startTime=2;
+  string endTime=3;
+}
+
+
+message ActivityAddResponse {
+  bool success=1;
+}
+
+
+//购物车下单
+message CartOrderRequest {
+  int64 userId=1;
+  int64 activityId=2;
+  int64 activityGoodId=3;
+}
+
+
+message CartOrderResponse {
+  float totalPrice=1;
+  string url=2;
+  string orderNo=3;
+}
+
+//购物车列表
+message CartListRequest {
+  int64 userId=1;
+}
+
+message CartList{
+  string key=1;
+  string value=2;
+}
+
+message CartListResponse {
+  repeated CartList list=1;
+}
+
+//购物车数量累加
+message CartAccRequest {
+  int64 userId=1;
+  int64 activityId=2;
+  int64 activityGoodId=3;
+  int64 buyCount=4;
+}
+
+
+message CartAccResponse {
+  bool success=1;
+}
+
+//购物车删除
+message CartDelRequest {
+  int64 userId=1;
+  int64 activityId=2;
+  int64 activityGoodId=3;
+}
+
+
+message CartDelResponse {
+  bool success=1;
+}
+
+//购物车添加
+message CartAddRequest {
+  int64 userId=1;
+  int64 activityId=2;
+  int64 activityGoodId=3;
+  int64 buyCount=4;
+}
+
+
+message CartAddResponse {
+  bool success=1;
+}
+
+//秒杀活动下单
+message ActivityOrderRequest {
+  int64 userId=1;
+  int64 activityId=2;
+  int64 activityGoodId=3;
+  int64 buyCount=4;
+}
+
+
+message ActivityOrderResponse {
+  float totalPrice=1;
+  string url=2;
+  string orderNo=3;
+}
+
+
+//秒杀商品添加
+message ActivityGoodAddRequest {
+  int64 activityId=1;
+  string goodName=2;
+  float activityPrice=3;
+  int64 activityStock=4;
+  int64 limit=5;
+}
+
+
+message ActivityGoodAddResponse {
+  bool success=1;
+}
+
+message CreateShopRequest {
+  string name = 1;
+  string description = 2;
+}
+
+
+message GetShopRequest {
+  string id = 1;
+}
+
+message ListShopsRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message UpdateShopRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+
+message DeleteShopRequest {
+  string id = 1;
+}
+
+message ShopResponse {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string created_at = 4;
+  string updated_at = 5;
+}
+
+
+message ListShopsResponse {
+  repeated ShopResponse items = 1;
+  int64 total = 2;
+}
+
+message DeleteShopResponse {
+  bool success = 1;
+}

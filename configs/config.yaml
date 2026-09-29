@@ -12,6 +12,10 @@ grpc:
   host: 0.0.0.0
 
 services:
+  shop:
+    name: shop-service
+    port: 9101
+    target: 127.0.0.1:9101
   gateway:
     name: gateway
   user:
@@ -28,11 +32,11 @@ services:
     target: 127.0.0.1:9100
 
 database:
-  driver: sqlite
+  driver: mysql
   dsn: data/xiaolanshu.db
 
 mysql:
-  dsn: ""
+  dsn: "root:root@tcp(127.0.0.1:3306)/day11?charset=utf8mb4&parseTime=True&loc=Local"
   max_idle_conns: 10
   max_open_conns: 100
   conn_max_lifetime_seconds: 3600
@@ -144,7 +148,7 @@ redis:
 
 elasticsearch:
   addresses:
-    - http://127.0.0.1:9200
+    - http://115.191.16.164:9200
   username: ""
   password: ""
   cloud_id: ""
@@ -152,7 +156,7 @@ elasticsearch:
 
 kafka:
   brokers:
-    - 127.0.0.1:9092
+    - 115.191.16.164:9092
   topic: xiaolanshu-events
   group_id: xiaolanshu-consumer
   client_id: xiaolanshu
@@ -192,11 +196,11 @@ kafka:
     server_name: ""
 
 alipay:
-  app_id: ""
-  private_key: ""
-  alipay_public_key: ""
+  app_id: "9021000162645204"
+  private_key: "MIIEpAIBAAKCAQEAilnKpS6wTh4/YdIf56QpX32aJx6ZhWlNGELA/0vU2zR+f7YwUsQebL+2ND1M+pfN0pH+iEeax9mtfrXC4xpCAL80g8Y9wD7wsuYNMz5o8/nYe5eX2gHHBu1qUfSVSVVYZo1d88hkHyo3nO+U/BTxBgWUZoC+WESJGvvpy1R1Hd9TiDXTrsheqz8BwLT1/8QrKrTHX0tTS5JhMSmpGXQ24LnvUlRND7sCp3355UbWYEs+i/2XTJbwk9elrRaMwbcp8rGizYCyGuS91vw2bem0wvgvkkEI/tZeHdspYaL2PcENsy475LYoQvpRD6LU1wg+aHvImlvsGhxgxAuT98dhuwIDAQABAoIBAHoJ7rl6z8Z45AwT4FTi+CPllZ9AXMfUNU9bQwdwCtk6GwPo4AOCQBxJmB3InSjH06UVZ2MrVptHpsUI7FqMBQDHqTk8G6iDXKtSRv6W5Nmh4JZVCHwj6T5xGsIkb7N6dzovJVsvvzHGebwTkmYyytE3BsrMchtGiXKmGHtlitHHoTqw/uWBpUEcIeh/i7xORcXUytFP+Xsj4n5GkNdnYrveI2omfRn4v7v17X7NhIGnWZxa6wbrYZ2sN+bJhInNzkGcZmNWmBMtVMrjs3aeHKJ6M7mSoxLOcrWpG2VBLZvpwt9OXHNabca/05CBXRPPgZQGud2+M5cy7WjeINWPj7ECgYEA8hiYm33JcjesTIfuKkHwHjZYmc2zJsUOHK6/4dafKscFJFBM9heVzKUF/FgqOtiWzDK/ZcDwIzFrROb5qIXKRHMNpcZ1S45mM4WX3uoYpWatalL+AXbcXVwtbbjNC2gXftLKefSl6i7SVBQ+HpN7JKBAUPI+w5zOXXkm0+sB/A8CgYEAkkviuBQV4Gcz//EupbZBgkuPRNNgs5eu/lQ67k0UCyx8uZy+uk/PAtC7RsP3DL0jKpEyVBP/QnbLVN28aSXoBmvRDP9Dm269HwTuReFIPx8dp3IWl87AdHVslEgOmIH4YyEJkmfYVarhK2FYsgZ0rUp3nPDe3SGech/8QcYcg5UCgYEAvqrube/oWuNL+M5JndBmq3TD3QYrZYpm7eIXT2d33fn2q73ujxbOLOl/SFmrkMMKKPKC2UHWHvGJ+S8sSzRrs/MlOX2O3Z3eEg/SJ4cZOBMg2w9X65FQRtsVEEgufSBS+NhNDTXIAiM0FXIH5o7iulrXrKjNE8SIpweGs/pvirMCgYBFjZqOlc4I0EgiqNHaqxneDnpg6HYTLExgUj9qSG79GPt7a5AqGAN9fStsa4KrJcjwVfOtkYxMVxo4kOsguorjcqMDIOFNpop3kuqNgpvMlsiMcWtYZU2OkL08ij2WOESVLIHWf1SU9hbzfuaiTPtv3/WaQdJTI8amz5oo0z1/OQKBgQDYJn96gieq1dzpj/KUla1C+BxKfk0BWGOIb6nCH+VKO5fx4i/YG9+c//ab+XaX7qsA4oqMcS8EhTXEZtpAMmoCXjGD59/CYWXcsZsDiWwypV/Rxl8V5KfJORFvtGyHCLMzrBr9EeilVfkX3BZAN3Qu69cz7ZDwVxBCTAOrSW5auA=="
+  alipay_public_key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAilnKpS6wTh4/YdIf56QpX32aJx6ZhWlNGELA/0vU2zR+f7YwUsQebL+2ND1M+pfN0pH+iEeax9mtfrXC4xpCAL80g8Y9wD7wsuYNMz5o8/nYe5eX2gHHBu1qUfSVSVVYZo1d88hkHyo3nO+U/BTxBgWUZoC+WESJGvvpy1R1Hd9TiDXTrsheqz8BwLT1/8QrKrTHX0tTS5JhMSmpGXQ24LnvUlRND7sCp3355UbWYEs+i/2XTJbwk9elrRaMwbcp8rGizYCyGuS91vw2bem0wvgvkkEI/tZeHdspYaL2PcENsy475LYoQvpRD6LU1wg+aHvImlvsGhxgxAuT98dhuwIDAQAB"
   production: false
-  notify_url: ""
+  notify_url: "http://4c358f05.r8.cpolar.cn/api/v1/shops/notify"
   return_url: ""
   encrypt_key: ""
   app_cert_public_key_path: ""
@@ -221,9 +225,14 @@ middleware:
       - X-Request-ID
     allow_credentials: false
   jwt:
-    secret: ""
+    secret: "xiaolanshu"
     issuer: xiaolanshu
     expire_seconds: 7200
+#  rate_limit:
+#     enable: true
+#     qps: 10
+#     burst: 5
+#     key_by: ip
 
 log:
   service: xiaolanshu

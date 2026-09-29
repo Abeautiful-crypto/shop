@@ -1,0 +1,55 @@
+package entity
+
+import (
+	"errors"
+
+	"strings"
+	"time"
+
+	"github.com/google/uuid"
+)
+
+var (
+	ErrShopNotFound = errors.New("shop not found")
+	ErrInvalidShop  = errors.New("invalid shop")
+)
+
+// Shop 是 shop 业务服务的聚合根。
+// 业务明确后，请将 Name 和 Description 替换为真实业务字段。
+type Shop struct {
+	ID          string
+	Name        string
+	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+}
+
+// NewShop 校验输入，并创建带框架管理身份字段的聚合。
+func NewShop(name string, description string) (*Shop, error) {
+	name = strings.TrimSpace(name)
+	description = strings.TrimSpace(description)
+	if name == "" {
+		return nil, ErrInvalidShop
+	}
+	now := time.Now().UTC()
+	return &Shop{
+		ID:          uuid.NewString(),
+		Name:        name,
+		Description: description,
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}, nil
+}
+
+// Update 修改可变字段，并把校验保留在业务实体内部。
+func (item *Shop) Update(name string, description string) error {
+	name = strings.TrimSpace(name)
+	description = strings.TrimSpace(description)
+	if item == nil || item.ID == "" || name == "" {
+		return ErrInvalidShop
+	}
+	item.Name = name
+	item.Description = description
+	item.UpdatedAt = time.Now().UTC()
+	return nil
+}

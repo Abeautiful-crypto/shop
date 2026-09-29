@@ -43,6 +43,9 @@ func main() {
 	}
 	defer clients.Close()
 
+	//res := redisx.NewClient(config.MustGlobal().Redis)
+	//locker := redisx.NewLocker(res, cfg.Redis.Lock)
+
 	engine := router.New(clients, log, cfg.Middleware)
 	addr := fmt.Sprintf("%s:%d", cfg.HTTP.Host, cfg.HTTP.Port)
 	server := &http.Server{

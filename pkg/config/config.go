@@ -134,6 +134,7 @@ func (cfg MongoDBConfig) MongoxConfig() mongox.Config {
 type MiddlewareConfig struct {
 	CORS middleware.CORSConfig `mapstructure:"cors" yaml:"cors"`
 	JWT  middleware.JWTConfig  `mapstructure:"jwt" yaml:"jwt"`
+	//RateLimit middleware.RateLimitConfig `mapstructure:"rate_limit" yaml:"rate_limit"`
 }
 
 // Config is the root application configuration loaded by each process.
